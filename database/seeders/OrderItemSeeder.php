@@ -2,40 +2,31 @@
 
 namespace Database\Seeders;
 
-use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\User;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class OrderItemSeeder extends Seeder
-
 {
     public function run(): void
     {
-        $customers = User::where('role', 'customer')->get();
-        $products = Product::all();
+        $order = Order::first();
+        $lipstick = Product::where('name', 'Luxe Lipstick')->first();
+        $cream = Product::where('name', 'Glow Face Cream')->first();
 
-        foreach ($customers as $customer) {
-            $order = Order::create([
-                'user_id' => $customer->id,
-                'status' => 'pending',
-                'total_price' => 0, // will update after adding items
-            ]);
+        OrderItem::create([
+            'order_id' => $order->id,
+            'product_id' => $lipstick->id,
+            'quantity' => 1,
+            'price' => $lipstick->price,
+        ]);
 
-            $total = 0;
-            foreach ($products->random(3) as $product) {
-                $quantity = rand(1, 5);
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'quantity' => $quantity,
-                    'price' => $product->price,
-                ]);
-                $total += $product->price * $quantity;
-            }
-
-            $order->update(['total_price' => $total]);
-        }
+        OrderItem::create([
+            'order_id' => $order->id,
+            'product_id' => $cream->id,
+            'quantity' => 1,
+            'price' => $cream->price,
+        ]);
     }
 }

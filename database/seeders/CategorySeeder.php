@@ -2,17 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
 use Illuminate\Database\Seeder;
+use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = ['Skincare', 'Makeup', 'Haircare', 'Fragrance', 'Nail'];
+        // Define your categories with optional descriptions
+        $categories = [
+            ['name' => 'Makeup', 'description' => 'All kinds of makeup products.'],
+            ['name' => 'Skincare', 'description' => 'Skincare and facial care products.'],
+            ['name' => 'Haircare', 'description' => 'Hair products for all types.'],
+            ['name' => 'Fragrance', 'description' => 'Perfumes and scents for men and women.'],
+            ['name' => 'Nail', 'description' => 'Nail polishes and manicure/pedicure products.'],
+        ];
 
-        foreach ($categories as $name) {
-            Category::create(['name' => $name, 'description' => $name . ' category.']);
+        // Create or update categories to prevent duplication
+        foreach ($categories as $category) {
+            Category::updateOrCreate(
+                ['name' => $category['name']], // unique key
+                ['description' => $category['description']]
+            );
         }
     }
 }

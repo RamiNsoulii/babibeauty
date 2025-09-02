@@ -11,17 +11,14 @@ class BookingSeeder extends Seeder
 {
     public function run(): void
     {
-        $customers = User::where('role', 'customer')->get();
-        $experts = BeautyExpert::all();
+        $customer1 = User::where('email', 'customer1@example.com')->first();
+        $expert1 = BeautyExpert::first();
 
-        foreach ($customers as $customer) {
-            $expert = $experts->random();
-            Booking::create([
-                'customer_id' => $customer->id,
-                'expert_id' => $expert->id,
-                'booking_date' => now()->addDays(rand(1, 30)),
-                'status' => 'pending',
-            ]);
-        }
+        Booking::create([
+            'customer_id' => $customer1->id,
+            'expert_id' => $expert1->id,
+            'booking_date' => now()->addDays(1),
+            'status' => 'pending',
+        ]);
     }
 }

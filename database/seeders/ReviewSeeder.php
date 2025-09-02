@@ -14,16 +14,19 @@ class ReviewSeeder extends Seeder
         $customers = User::where('role', 'customer')->get();
         $products = Product::all();
 
+        if ($customers->isEmpty() || $products->isEmpty()) {
+            return; // no users or products, nothing to seed
+        }
+
         foreach ($customers as $customer) {
-            foreach ($products->random(3) as $product) {
-                Review::create([
-                    'user_id' => $customer->id,
-                    'reviewable_id' => $product->id,
-                    'reviewable_type' => Product::class,
-                    'rating' => rand(1, 5),
-                    'comment' => 'This is a review for ' . $product->name,
-                ]);
-            }
+            $product = $products->random(); // assign a random product
+            Review::create([
+                'user_id' => $customer->id,
+                'reviewable_id' => $product->id,
+                'reviewable_type' => Product::class,
+                'rating' => rand(3, 5),
+                'comment' => 'Sample review comment for ' . $product->name,
+            ]);
         }
     }
 }

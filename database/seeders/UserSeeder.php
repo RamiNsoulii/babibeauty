@@ -19,9 +19,33 @@ class UserSeeder extends Seeder
         ]);
 
         // Experts
-        User::factory(5)->create(['role' => 'expert']);
+        User::create([
+            'name' => 'Expert One',
+            'email' => 'expert1@example.com',
+            'role' => 'expert',
+            'password' => Hash::make('password123'),
+        ]);
+
+        User::create([
+            'name' => 'Expert Two',
+            'email' => 'expert2@example.com',
+            'role' => 'expert',
+            'password' => Hash::make('password123'),
+        ]);
 
         // Customers
-        User::factory(10)->create(['role' => 'customer']);
+        User::create([
+            'name' => 'Customer One',
+            'email' => 'customer1@example.com',
+            'role' => 'customer',
+            'password' => Hash::make('password123'),
+        ]);
+
+        User::create([
+            'name' => 'Customer Two',
+            'email' => 'customer2@example.com',
+            'role' => 'customer',
+            'password' => Hash::make('password123'),
+        ]);
     }
 }

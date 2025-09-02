@@ -10,16 +10,23 @@ class BeautyExpertSeeder extends Seeder
 {
     public function run(): void
     {
-        $experts = User::where('role', 'expert')->get();
+        $expert1 = User::where('email', 'expert1@example.com')->first();
+        $expert2 = User::where('email', 'expert2@example.com')->first();
 
-        foreach ($experts as $expert) {
-            BeautyExpert::create([
-                'user_id' => $expert->id,
-                'bio' => 'Experienced beauty expert specializing in skincare.',
-                'specialization' => 'Skincare',
-                'experience_years' => rand(1, 10),
-                'hourly_rate' => rand(20, 100),
-            ]);
-        }
+        BeautyExpert::create([
+            'user_id' => $expert1->id,
+            'bio' => 'Experienced makeup artist.',
+            'specialization' => 'Makeup',
+            'experience_years' => 5,
+            'hourly_rate' => 50.00,
+        ]);
+
+        BeautyExpert::create([
+            'user_id' => $expert2->id,
+            'bio' => 'Professional hairstylist.',
+            'specialization' => 'Hair',
+            'experience_years' => 7,
+            'hourly_rate' => 60.00,
+        ]);
     }
 }

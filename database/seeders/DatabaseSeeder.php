@@ -15,11 +15,11 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ProductSeeder::class,
             ProductImageSeeder::class,
+            CategoryProductSeeder::class,
             ReviewSeeder::class,
             BookingSeeder::class,
             OrderSeeder::class,
             OrderItemSeeder::class,
-            CategoryProductSeeder::class,
         ]);
     }
 }

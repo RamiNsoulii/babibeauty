@@ -10,18 +10,23 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $brands = Brand::all();
+        $luxe = Brand::where('name', 'Luxe Beauty')->first();
+        $glow = Brand::where('name', 'Glow Cosmetics')->first();
 
-        foreach ($brands as $brand) {
-            for ($i = 1; $i <= 5; $i++) {
-                Product::create([
-                    'brand_id' => $brand->id,
-                    'name' => $brand->name . ' Product ' . $i,
-                    'description' => 'Description for ' . $brand->name . ' Product ' . $i,
-                    'price' => rand(10, 200),
-                    'stock' => rand(5, 50),
-                ]);
-            }
-        }
+        Product::create([
+            'brand_id' => $luxe->id,
+            'name' => 'Luxe Lipstick',
+            'description' => 'Long-lasting luxury lipstick.',
+            'price' => 25.00,
+            'stock' => 100,
+        ]);
+
+        Product::create([
+            'brand_id' => $glow->id,
+            'name' => 'Glow Face Cream',
+            'description' => 'Hydrating daily face cream.',
+            'price' => 15.00,
+            'stock' => 200,
+        ]);
     }
 }

@@ -2,17 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\Brand;
 use Illuminate\Database\Seeder;
+use App\Models\Brand;
 
 class BrandSeeder extends Seeder
 {
     public function run(): void
     {
-        $brands = ['Luxe Beauty', 'Glow Up', 'Skin Master', 'Hair Pro', 'Makeup Magic'];
-
-        foreach ($brands as $name) {
-            Brand::create(['name' => $name, 'description' => $name . ' products.']);
-        }
+        Brand::create(['name' => 'Luxe Beauty', 'description' => 'Luxury makeup brand.']);
+        Brand::create(['name' => 'Glow Cosmetics', 'description' => 'Everyday skincare brand.']);
     }
 }
