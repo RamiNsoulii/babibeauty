@@ -22,30 +22,25 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Users
-    Route::apiResource('users', UserController::class);
+    // Admin-only routes
+    Route::middleware('role:admin')->group(function () {
+        Route::apiResource('users', UserController::class);
+        Route::apiResource('brands', BrandController::class);
+        Route::apiResource('categories', CategoryController::class);
+    });
 
-    // Beauty Experts
-    Route::apiResource('beauty-experts', BeautyExpertController::class);
+    // Admin + Expert routes
+    Route::middleware('role:admin,expert')->group(function () {
+        Route::apiResource('beauty-experts', BeautyExpertController::class);
+        Route::apiResource('products', ProductController::class);
+        Route::apiResource('product-images', ProductImageController::class);
+    });
 
-    // Brands
-    Route::apiResource('brands', BrandController::class);
+    // Admin + Customer routes
+    Route::middleware('role:admin,customer')->group(function () {
+        Route::apiResource('reviews', ReviewController::class);
+        Route::apiResource('bookings', BookingController::class);
+        Route::apiResource('orders', OrderController::class);
+    });
 
-    // Categories
-    Route::apiResource('categories', CategoryController::class);
-
-    // Products
-    Route::apiResource('products', ProductController::class);
-
-    // Product Images
-    Route::apiResource('product-images', ProductImageController::class);
-
-    // Reviews
-    Route::apiResource('reviews', ReviewController::class);
-
-    // Bookings
-    Route::apiResource('bookings', BookingController::class);
-
-    // Orders
-    Route::apiResource('orders', OrderController::class);
 });
