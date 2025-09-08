@@ -7,12 +7,7 @@ use Illuminate\Http\Request;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * Usage: ->middleware(['auth:sanctum', 'role:admin'])
-     *        ->middleware(['auth:sanctum', 'role:admin,expert'])
-     */
+
     public function handle(Request $request, Closure $next, ...$roles)
     {
         $user = $request->user();

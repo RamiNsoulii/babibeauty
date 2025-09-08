@@ -12,35 +12,46 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+// ========================
 // Public routes
+// ========================
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// ========================
 // Protected routes
+// ========================
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Auth
+    // ---------- Auth ----------
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Admin-only routes
+    // ---------- Admin-only ----------
     Route::middleware('role:admin')->group(function () {
         Route::apiResource('users', UserController::class);
         Route::apiResource('brands', BrandController::class);
         Route::apiResource('categories', CategoryController::class);
     });
 
-    // Admin + Expert routes
+    // ---------- Admin + Expert ----------
     Route::middleware('role:admin,expert')->group(function () {
         Route::apiResource('beauty-experts', BeautyExpertController::class);
         Route::apiResource('products', ProductController::class);
         Route::apiResource('product-images', ProductImageController::class);
     });
 
-    // Admin + Customer routes
+    // ---------- Admin + Customer ----------
     Route::middleware('role:admin,customer')->group(function () {
-        Route::apiResource('reviews', ReviewController::class);
+        // Reviews for products
+        Route::get('/products/{product}/reviews', [ReviewController::class, 'indexForProduct']);
+        Route::post('/products/{product}/reviews', [ReviewController::class, 'storeForProduct']);
+
+        // Reviews for beauty experts
+        Route::get('/beauty-experts/{beautyExpert}/reviews', [ReviewController::class, 'indexForExpert']);
+        Route::post('/beauty-experts/{beautyExpert}/reviews', [ReviewController::class, 'storeForExpert']);
+
+        // Bookings + Orders
         Route::apiResource('bookings', BookingController::class);
         Route::apiResource('orders', OrderController::class);
     });
-
 });

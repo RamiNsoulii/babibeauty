@@ -9,32 +9,33 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // Register new user
+    // ✅ Register new user (always as customer)
     public function register(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed', // expects password_confirmation field
+            'password' => 'required|string|min:6|confirmed', // needs password_confirmation
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
+            'role' => 'customer', // ✅ force default role
         ]);
 
-        // Return token after registration
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'User registered successfully',
+            'user' => $user, // show role in response
             'access_token' => $token,
             'token_type' => 'Bearer',
         ], 201);
     }
 
-    // Login existing user
+    // ✅ Login existing user
     public function login(Request $request)
     {
         $request->validate([
@@ -50,17 +51,17 @@ class AuthController extends Controller
             ]);
         }
 
-        // Create a new token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful',
+            'user' => $user, // include role so frontend knows
             'access_token' => $token,
             'token_type' => 'Bearer',
         ]);
     }
 
-    // Logout user (delete current token)
+    // ✅ Logout user (delete current token)
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
