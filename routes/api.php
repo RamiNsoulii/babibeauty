@@ -12,9 +12,30 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-/// ========================
-// Protected routes
-// ========================
+// =========================
+// Public (no login required)
+// =========================
+Route::get('/brands', [BrandController::class, 'index']);
+Route::get('/brands/{id}', [BrandController::class, 'show']);
+
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/{id}', [CategoryController::class, 'show']);
+
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{id}', [ProductController::class, 'show']);
+
+Route::get('/beauty-experts', [BeautyExpertController::class, 'index']);
+Route::get('/beauty-experts/{id}', [BeautyExpertController::class, 'show']);
+
+// =========================
+// Auth (login/register)
+// =========================
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// =========================
+// Protected (requires login)
+// =========================
 Route::middleware('auth:sanctum')->group(function () {
 
     // ---------- Auth ----------
@@ -23,36 +44,42 @@ Route::middleware('auth:sanctum')->group(function () {
     // ---------- Admin-only ----------
     Route::middleware('role:admin')->group(function () {
         Route::apiResource('users', UserController::class);
-        Route::apiResource('brands', BrandController::class);
-        Route::apiResource('categories', CategoryController::class);
-    });
 
-    // ---------- Admin + Expert ----------
-    Route::middleware('role:admin,expert')->group(function () {
-        Route::apiResource('beauty-experts', BeautyExpertController::class);
-        Route::apiResource('products', ProductController::class);
+        Route::post('/brands', [BrandController::class, 'store']);
+        Route::put('/brands/{id}', [BrandController::class, 'update']);
+        Route::delete('/brands/{id}', [BrandController::class, 'destroy']);
+
+        Route::post('/categories', [CategoryController::class, 'store']);
+        Route::put('/categories/{id}', [CategoryController::class, 'update']);
+        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+
+        Route::apiResource('products', ProductController::class)->except(['index', 'show']);
         Route::apiResource('product-images', ProductImageController::class);
-
-        // Expert self-service (only for experts)
-        Route::middleware('role:expert')->group(function () {
-            Route::get('/my-expert-profile/bookings', [BeautyExpertController::class, 'myBookings']);
-            Route::get('/my-expert-profile/reviews', [BeautyExpertController::class, 'myReviews']);
-            Route::put('/my-expert-profile', [BeautyExpertController::class, 'updateMyProfile']);
-        });
+        Route::apiResource('beauty-experts', BeautyExpertController::class)->except(['index', 'show']);
     });
 
-    // ---------- Admin + Customer ----------
-    Route::middleware('role:admin,customer')->group(function () {
+    // ---------- Expert-only ----------
+    Route::middleware('role:expert')->group(function () {
+        Route::get('/my-expert-profile/bookings', [BeautyExpertController::class, 'myBookings']);
+        Route::get('/my-expert-profile/reviews', [BeautyExpertController::class, 'myReviews']);
+        Route::put('/my-expert-profile', [BeautyExpertController::class, 'updateMyProfile']);
+    });
+
+    // ---------- Customer-only ----------
+    Route::middleware('role:customer')->group(function () {
         // Reviews for products
         Route::get('/products/{product}/reviews', [ReviewController::class, 'indexForProduct']);
         Route::post('/products/{product}/reviews', [ReviewController::class, 'storeForProduct']);
+        Route::put('/products/{product}/reviews/{review}', [ReviewController::class, 'updateForProduct']);
 
         // Reviews for beauty experts
         Route::get('/beauty-experts/{beautyExpert}/reviews', [ReviewController::class, 'indexForExpert']);
         Route::post('/beauty-experts/{beautyExpert}/reviews', [ReviewController::class, 'storeForExpert']);
+        Route::put('/beauty-experts/{beautyExpert}/reviews/{review}', [ReviewController::class, 'updateForExpert']);
 
         // Bookings + Orders
         Route::apiResource('bookings', BookingController::class);
         Route::apiResource('orders', OrderController::class);
     });
+
 });

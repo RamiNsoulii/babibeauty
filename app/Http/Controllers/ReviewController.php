@@ -135,4 +135,50 @@ class ReviewController extends Controller
 
         return response()->json($review, 201);
     }
+    public function updateForProduct(Request $request, $productId, $reviewId)
+    {
+        $review = Review::where('reviewable_type', 'App\\Models\\Product')
+            ->where('reviewable_id', $productId)
+            ->where('user_id', auth()->id())
+            ->find($reviewId);
+
+        if (!$review) {
+            return response()->json(['message' => 'Review not found'], 404);
+        }
+
+        $data = $request->validate([
+            'rating' => 'sometimes|integer|min:1|max:5',
+            'comment' => 'sometimes|string|max:1000',
+        ]);
+
+        $review->update($data);
+
+        return response()->json($review);
+    }
+
+
+
+
+    public function updateForExpert(Request $request, $expertId, $reviewId)
+    {
+        $review = Review::where('reviewable_id', $expertId)
+            ->where('reviewable_type', 'App\\Models\\BeautyExpert')
+            ->where('user_id', auth()->id())
+            ->find($reviewId);
+
+        if (!$review) {
+            return response()->json(['message' => 'Review not found'], 404);
+        }
+
+        $data = $request->validate([
+            'rating' => 'sometimes|integer|min:1|max:5',
+            'comment' => 'sometimes|string|max:1000',
+        ]);
+
+        $review->update($data);
+
+        return response()->json($review);
+    }
+
+
 }
