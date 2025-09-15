@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BeautyExpert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class BeautyExpertController extends Controller
 {
@@ -34,18 +35,41 @@ class BeautyExpertController extends Controller
             return response()->json(['message' => 'Only admin can create experts'], 403);
         }
 
+        // validate data for creating user + expert profile
         $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
             'bio' => 'nullable|string',
             'specialization' => 'nullable|string|max:255',
             'experience_years' => 'nullable|integer|min:0',
             'hourly_rate' => 'nullable|numeric|min:0',
         ]);
 
-        $expert = BeautyExpert::create($data);
+        // Step 1: create user with role = expert
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+            'role' => 'expert',
+        ]);
 
-        return response()->json($expert, 201);
+        // Step 2: create expert profile linked to this user
+        $expert = BeautyExpert::create([
+            'user_id' => $user->id,
+            'bio' => $data['bio'] ?? null,
+            'specialization' => $data['specialization'] ?? null,
+            'experience_years' => $data['experience_years'] ?? 0,
+            'hourly_rate' => $data['hourly_rate'] ?? 0,
+        ]);
+
+        return response()->json([
+            'message' => 'Expert created successfully',
+            'user' => $user,
+            'expert' => $expert,
+        ], 201);
     }
+
 
     // ========== Admin or owner: Update expert ==========
     public function update(Request $request, $id)
