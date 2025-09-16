@@ -77,6 +77,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/beauty-experts/{beautyExpert}/reviews', [ReviewController::class, 'storeForExpert']);
         Route::put('/beauty-experts/{beautyExpert}/reviews/{review}', [ReviewController::class, 'updateForExpert']);
 
+        // Delete a review for a product
+        Route::delete('/products/{product}/reviews/{review}', [ReviewController::class, 'destroyForProduct']);
+        Route::delete('/beauty-experts/{beautyExpert}/reviews/{review}', [ReviewController::class, 'destroyForExpert']);
+
         // Bookings + Orders
         Route::apiResource('bookings', BookingController::class);
         Route::apiResource('orders', OrderController::class);

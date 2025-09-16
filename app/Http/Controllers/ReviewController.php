@@ -29,7 +29,6 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'reviewable_id' => 'required|integer',
             'reviewable_type' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
@@ -76,18 +75,19 @@ class ReviewController extends Controller
     public function storeForProduct(Request $request, $productId)
     {
         $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string',
         ]);
 
         $data['reviewable_id'] = $productId;
         $data['reviewable_type'] = 'App\\Models\\Product';
+        $data['user_id'] = $request->user()->id; // assign logged-in user automatically
 
         $review = Review::create($data);
 
         return response()->json($review, 201);
     }
+
 
     // Get all reviews for a product
     public function indexForProduct($productId)
@@ -178,6 +178,38 @@ class ReviewController extends Controller
         $review->update($data);
 
         return response()->json($review);
+    }
+    public function destroyForProduct($productId, $reviewId)
+    {
+        $review = Review::where('reviewable_type', 'App\\Models\\Product')
+            ->where('reviewable_id', $productId)
+            ->where('user_id', auth()->id())
+            ->find($reviewId);
+
+        if (!$review) {
+            return response()->json(['message' => 'Review not found or unauthorized'], 404);
+        }
+
+        $review->delete();
+
+        return response()->json(['message' => 'Review deleted']);
+    }
+
+    // Delete a customer's review for a beauty expert
+    public function destroyForExpert($expertId, $reviewId)
+    {
+        $review = Review::where('reviewable_type', 'App\\Models\\BeautyExpert')
+            ->where('reviewable_id', $expertId)
+            ->where('user_id', auth()->id())
+            ->find($reviewId);
+
+        if (!$review) {
+            return response()->json(['message' => 'Review not found or unauthorized'], 404);
+        }
+
+        $review->delete();
+
+        return response()->json(['message' => 'Review deleted']);
     }
 
 

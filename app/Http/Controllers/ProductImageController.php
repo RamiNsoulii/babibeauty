@@ -47,27 +47,41 @@ class ProductImageController extends Controller
     public function update(Request $request, $id)
     {
         $image = ProductImage::find($id);
-        if (!$image) return response()->json(['message' => 'Image not found'], 404);
 
+        if (!$image) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        // Validate incoming data
         $data = $request->validate([
-            'image' => 'sometimes|image|max:2048', // optional file
-            'is_primary' => 'boolean',
+            'image' => 'sometimes|image|max:5000', // optional image file, max 5MB
+            'is_primary' => 'sometimes|boolean',
         ]);
 
-        // Upload new image if provided
+        // If new image is uploaded
         if ($request->hasFile('image')) {
-            // Delete old image file if exists
+            // Delete old image if exists
             if ($image->image_path && Storage::disk('public')->exists($image->image_path)) {
                 Storage::disk('public')->delete($image->image_path);
             }
 
+            // Store the new image
             $path = $request->file('image')->store('product-images', 'public');
-            $data['image_path'] = $path;
+            $image->image_path = $path;
         }
 
-        $image->update($data);
+        // Update is_primary if provided
+        if (isset($data['is_primary'])) {
+            $image->is_primary = $data['is_primary'];
+        }
 
-        return response()->json($image);
+        // Save changes
+        $image->save();
+
+        return response()->json([
+            'message' => 'Image updated successfully',
+            'image' => $image->fresh()
+        ]);
     }
 
     // Delete an image
