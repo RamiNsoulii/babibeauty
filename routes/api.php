@@ -12,9 +12,9 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-// =========================
+
 // Public (no login required)
-// =========================
+
 Route::get('/brands', [BrandController::class, 'index']);
 Route::get('/brands/{id}', [BrandController::class, 'show']);
 
@@ -27,18 +27,18 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::get('/beauty-experts', [BeautyExpertController::class, 'index']);
 Route::get('/beauty-experts/{id}', [BeautyExpertController::class, 'show']);
 
-// =========================
+
 // Auth (login/register)
-// =========================
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// =========================
+
 // Protected (requires login)
-// =========================
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    // ---------- Auth ----------
+    
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // ---------- Admin-only ----------

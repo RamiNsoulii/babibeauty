@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    // ===========================
-    // List Orders
-    // ===========================
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -28,9 +26,7 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
-    // ===========================
-    // Show Single Order
-    // ===========================
+
     public function show(Request $request, $id)
     {
         $user = $request->user();
@@ -48,9 +44,6 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    // ===========================
-    // Create Order
-    // ===========================
     public function store(Request $request)
     {
         $user = $request->user(); // logged-in customer
@@ -92,9 +85,6 @@ class OrderController extends Controller
     }
 
 
-    // ===========================
-    // Update Order
-    // ===========================
     public function update(Request $request, $id)
     {
         $user = $request->user();
@@ -119,9 +109,6 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    // ===========================
-    // Delete Order
-    // ===========================
     public function destroy(Request $request, $id)
     {
         $user = $request->user();

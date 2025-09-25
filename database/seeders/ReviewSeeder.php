@@ -15,11 +15,11 @@ class ReviewSeeder extends Seeder
         $products = Product::all();
 
         if ($customers->isEmpty() || $products->isEmpty()) {
-            return; // no users or products, nothing to seed
+            return;
         }
 
         foreach ($customers as $customer) {
-            $product = $products->random(); // assign a random product
+            $product = $products->random();
             Review::create([
                 'user_id' => $customer->id,
                 'reviewable_id' => $product->id,

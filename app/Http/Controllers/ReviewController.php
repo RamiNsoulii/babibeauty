@@ -9,13 +9,12 @@ use App\Http\Controllers\Controller;
 
 class ReviewController extends Controller
 {
-    // Get all reviews
+
     public function index()
     {
         return response()->json(Review::with('user')->get());
     }
 
-    // Get a single review
     public function show($id)
     {
         $review = Review::with('user')->find($id);
@@ -25,7 +24,6 @@ class ReviewController extends Controller
         return response()->json($review);
     }
 
-    // Create a review (general)
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -40,7 +38,6 @@ class ReviewController extends Controller
         return response()->json($review, 201);
     }
 
-    // Update a review
     public function update(Request $request, $id)
     {
         $review = Review::find($id);
@@ -58,7 +55,6 @@ class ReviewController extends Controller
         return response()->json($review);
     }
 
-    // Delete a review
     public function destroy($id)
     {
         $review = Review::find($id);
@@ -71,7 +67,6 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Review deleted']);
     }
 
-    // Create a review for a product
     public function storeForProduct(Request $request, $productId)
     {
         $data = $request->validate([
@@ -89,7 +84,6 @@ class ReviewController extends Controller
     }
 
 
-    // Get all reviews for a product
     public function indexForProduct($productId)
     {
         $reviews = Review::with('user')
@@ -100,7 +94,6 @@ class ReviewController extends Controller
         return response()->json($reviews);
     }
 
-    // Get all reviews for a BeautyExpert
     public function indexForExpert($expertId)
     {
         $reviews = Review::with('user')
@@ -111,22 +104,20 @@ class ReviewController extends Controller
         return response()->json($reviews);
     }
 
-    // Create a review for a BeautyExpert using logged-in user
     public function storeForExpert(Request $request, $expertId)
     {
-        // Check if the BeautyExpert exists
+
         $expert = BeautyExpert::find($expertId);
         if (!$expert) {
             return response()->json(['message' => 'Expert not found'], 404);
         }
 
-        // Validate the request
+
         $data = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string',
         ]);
 
-        // Set the reviewable info and logged-in user
         $data['reviewable_id'] = $expertId;
         $data['reviewable_type'] = 'App\\Models\\BeautyExpert';
         $data['user_id'] = $request->user()->id; // automatically use logged-in user
@@ -195,7 +186,6 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Review deleted']);
     }
 
-    // Delete a customer's review for a beauty expert
     public function destroyForExpert($expertId, $reviewId)
     {
         $review = Review::where('reviewable_type', 'App\\Models\\BeautyExpert')

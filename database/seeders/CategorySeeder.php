@@ -9,7 +9,7 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        // Define your categories with optional descriptions
+
         $categories = [
             ['name' => 'Makeup', 'description' => 'All kinds of makeup products.'],
             ['name' => 'Skincare', 'description' => 'Skincare and facial care products.'],
@@ -18,7 +18,6 @@ class CategorySeeder extends Seeder
             ['name' => 'Nail', 'description' => 'Nail polishes and manicure/pedicure products.'],
         ];
 
-        // Create or update categories to prevent duplication
         foreach ($categories as $category) {
             Category::updateOrCreate(
                 ['name' => $category['name']], // unique key

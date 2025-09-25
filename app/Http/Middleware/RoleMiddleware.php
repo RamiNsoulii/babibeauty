@@ -16,12 +16,10 @@ class RoleMiddleware
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        // ✅ Admin bypass: give full access
         if (strtolower($user->role) === 'admin') {
             return $next($request);
         }
 
-        // flatten roles (sometimes Laravel passes "admin,expert" as single param)
         $allowed = [];
         foreach ($roles as $r) {
             foreach (explode(',', $r) as $seg) {
@@ -31,7 +29,7 @@ class RoleMiddleware
         }
 
         if (empty($allowed)) {
-            // no role param provided — allow by default (or deny if you prefer)
+
             return $next($request);
         }
 

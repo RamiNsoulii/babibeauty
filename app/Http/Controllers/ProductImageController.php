@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductImageController extends Controller
 {
-    // List all images
+
     public function index()
     {
         return response()->json(ProductImage::all());
@@ -58,7 +58,6 @@ class ProductImageController extends Controller
             'is_primary' => 'sometimes|boolean',
         ]);
 
-        // If new image is uploaded
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($image->image_path && Storage::disk('public')->exists($image->image_path)) {
@@ -70,12 +69,11 @@ class ProductImageController extends Controller
             $image->image_path = $path;
         }
 
-        // Update is_primary if provided
+
         if (isset($data['is_primary'])) {
             $image->is_primary = $data['is_primary'];
         }
 
-        // Save changes
         $image->save();
 
         return response()->json([
@@ -84,7 +82,7 @@ class ProductImageController extends Controller
         ]);
     }
 
-    // Delete an image
+
     public function destroy($id)
     {
         $image = ProductImage::find($id);

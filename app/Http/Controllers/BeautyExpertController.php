@@ -28,7 +28,7 @@ class BeautyExpertController extends Controller
         return response()->json($expert);
     }
 
-    // ========== Admin: Create new expert ==========
+
     public function store(Request $request)
     {
         if (Auth::user()->role !== 'admin') {
@@ -46,7 +46,7 @@ class BeautyExpertController extends Controller
             'hourly_rate' => 'nullable|numeric|min:0',
         ]);
 
-        // Step 1: create user with role = expert
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -54,7 +54,7 @@ class BeautyExpertController extends Controller
             'role' => 'expert',
         ]);
 
-        // Step 2: create expert profile linked to this user
+
         $expert = BeautyExpert::create([
             'user_id' => $user->id,
             'bio' => $data['bio'] ?? null,
@@ -71,7 +71,7 @@ class BeautyExpertController extends Controller
     }
 
 
-    // ========== Admin or owner: Update expert ==========
+
     public function update(Request $request, $id)
     {
         $expert = BeautyExpert::find($id);
@@ -113,7 +113,7 @@ class BeautyExpertController extends Controller
         return response()->json(['message' => 'Beauty Expert deleted']);
     }
 
-    // ========== Expert: View own profile ==========
+
     public function myProfile()
     {
         $expert = BeautyExpert::with('user', 'bookings', 'reviews')
@@ -127,7 +127,7 @@ class BeautyExpertController extends Controller
         return response()->json($expert);
     }
 
-    // ========== Expert: Update own profile ==========
+
     public function updateMyProfile(Request $request)
     {
         $expert = BeautyExpert::where('user_id', Auth::id())->first();
@@ -147,7 +147,7 @@ class BeautyExpertController extends Controller
         return response()->json($expert);
     }
 
-    // ========== Expert: Get own bookings ==========
+
     public function myBookings()
     {
         $expert = BeautyExpert::with('bookings')->where('user_id', Auth::id())->first();
@@ -159,7 +159,6 @@ class BeautyExpertController extends Controller
         return response()->json($expert->bookings);
     }
 
-    // ========== Expert: Get own reviews ==========
     public function myReviews()
     {
         $expert = BeautyExpert::with('reviews.user')->where('user_id', Auth::id())->first();

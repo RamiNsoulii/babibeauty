@@ -9,20 +9,20 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // ✅ Register new user (always as customer)
+
     public function register(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed', // needs password_confirmation
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
-            'role' => 'customer', // ✅ force default role
+            'role' => 'customer',
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -35,7 +35,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // ✅ Login existing user
     public function login(Request $request)
     {
         $request->validate([
@@ -61,7 +60,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // ✅ Logout user (delete current token)
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
